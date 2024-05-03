@@ -1,23 +1,42 @@
-import { test, expect } from 'vitest';
-import { multiply, sum } from './index';
+import { expect, test } from 'vitest';
+import { AirtableTs } from 'airtable-ts';
+import { execSync } from 'child_process';
 
-test('adds positive numbers', () => {
-  expect(sum(1, 3)).toBe(4);
-  expect(sum(10001, 1345)).toBe(11346);
-});
+// Run me with:
+// RUN_INTEGRATION=TRUE AIRTABLE_API_KEY=pat1234.abcd npm run test -- 'src/index.test.ts'
+(process.env.RUN_INTEGRATION ? test : test.skip)('integration test', async () => {
+  // WHEN... we run airtable-ts-codegen
+  await execSync('npm run build && cd dist && AIRTABLE_BASE_ID=app1cNCe6lBFLFgbM npx airtable-ts-codegen');
 
-test('adds negative numbers', () => {
-  expect(sum(-1, -3)).toBe(-4);
-  expect(sum(-10001, -1345)).toBe(-11346);
-});
+  // THEN... we can import the tasksTable definition
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  /** @ts-ignore */
+  // eslint-disable-next-line import/extensions
+  const { tasksTable } = await import('../dist/app1cNCe6lBFLFgbM.js');
 
-test('adds a negative and positive number', () => {
-  expect(sum(1, -3)).toBe(-2);
-  expect(sum(-10001, 1345)).toBe(-8656);
-});
+  // WHEN... we use this definition to get records in the table
+  const db = new AirtableTs({ apiKey: process.env.AIRTABLE_API_KEY ?? '' });
+  const records = await db.scan(tasksTable);
 
-test('multiplies positive numbers', () => {
-  expect(multiply(1, 3)).toBe(3);
-  expect(multiply(2, 3)).toBe(6);
-  expect(multiply(10001, 1345)).toBe(13451345);
+  // THEN... we get the records we expect in the format we expect
+  expect(records).toEqual([
+    {
+      id: 'recD0KglUuj0CkEVW',
+      name: 'First task',
+      status: 'In progress',
+      dueAt: 1717118580,
+      isOptional: false,
+      project: ['recLUUmrS706HP1Yb'],
+      projectOwner: 'Alice',
+    },
+    {
+      id: 'recnFWM2RsVGobKCp',
+      name: 'Second task',
+      status: 'Todo',
+      dueAt: 1717204980,
+      isOptional: true,
+      project: [],
+      projectOwner: null,
+    },
+  ]);
 });

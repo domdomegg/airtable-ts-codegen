@@ -1,15 +1,18 @@
 {
-  "name": "typescript-library-template",
+  "name": "airtable-ts-codegen",
   "version": "0.0.0",
-  "description": "Template for creating TypeScript libraries",
+  "description": "Autogenerate TypeScript definitions for your Airtable base",
   "license": "MIT",
   "author": "Adam Jones (domdomegg)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/domdomegg/typescript-library-template.git"
+    "url": "https://github.com/domdomegg/airtable-ts-codegen.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "airtable-ts-codegen": "dist/cli.js"
+  },
   "files": [
     "dist"
   ],
@@ -21,8 +24,14 @@
     "build": "tsc --project tsconfig.build.json",
     "prepublishOnly": "npm run clean && npm run build"
   },
+  "dependencies": {
+    "@kristiandupont/recase": "^1.2.1",
+    "axios": "^1.6.8"
+  },
   "devDependencies": {
     "@tsconfig/node-lts": "^20.1.3",
+    "@types/node": "^20.12.8",
+    "airtable-ts": "^1.1.0",
     "eslint": "^8.57.0",
     "eslint-config-domdomegg": "^1.2.3",
     "tsconfig-domdomegg": "^1.0.0",
