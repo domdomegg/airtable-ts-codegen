@@ -3,7 +3,7 @@ import { AirtableTs } from 'airtable-ts';
 import { execSync } from 'child_process';
 
 // Run me with:
-// RUN_INTEGRATION=TRUE AIRTABLE_API_KEY=pat1234.abcd npm run test -- 'src/index.test.ts'
+// AIRTABLE_API_KEY=pat1234.abcd RUN_INTEGRATION=TRUE npm run test -- 'src/index.test.ts'
 (process.env.RUN_INTEGRATION ? test : test.skip)('integration test', async () => {
   // WHEN... we run airtable-ts-codegen
   await execSync('npm run build && cd dist && AIRTABLE_BASE_ID=app1cNCe6lBFLFgbM npx airtable-ts-codegen');
