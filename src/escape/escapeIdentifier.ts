@@ -22,7 +22,16 @@ export const escapeIdentifier = (name: string): string => {
     return trimmed;
   }
 
-  const snaked = trimmed.replace(/[^$A-Z_a-z]/g, '_').replace(/_+/g, '_');
+  // Remove all characters up to the first valid identifier start character (A-Z, a-z, $), then
+  // replace all invalid characters with underscores, and finally collapse multiple underscores into one.
+  const validIdentifierStartIndex = trimmed.search(/[$A-Za-z]/);
+  if (validIdentifierStartIndex === -1) {
+    throw new Error(`Invalid and unsalvageable identifier: ${name}`);
+  }
+  const snaked = trimmed
+    .slice(validIdentifierStartIndex)
+    .replace(/[^$A-Z_a-z\d]/g, '_')
+    .replace(/_+/g, '_');
   const result = toPascalCase(snaked);
 
   if (result.length === 0) {

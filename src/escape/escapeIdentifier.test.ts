@@ -15,7 +15,8 @@ it.each([
     'ExampleThisIsATableYesEvenWithSymbolsId',
   ],
   ['if', 'If'],
-])('should escape string: %s -> %s', (s1, s2) => {
+  ['Date Field #1', 'DateField1'],
+])('should escape string: %s -> %s', (s1, s2?) => {
   expect(escapeIdentifier(s1)).toBe(s2 ?? s1);
 });
 
@@ -23,6 +24,7 @@ it.each([
   ['empty string', ''],
   ['whitespace', ' '],
   ['symbols', "\"'`\t"],
+  ['only numbers', '1234'],
 ])('should throw if unsalvageable: %s', (_, s) => {
   expect(() => escapeIdentifier(s)).toThrow();
 });
