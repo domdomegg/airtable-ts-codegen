@@ -1,6 +1,11 @@
 import { FieldSchema } from './getBaseSchema';
 
-export const jsTypeForAirtableType = (field: FieldSchema): string => {
+/**
+ * Returns the corresponding Typescript type for the given Airtable field type.
+ *
+ * Unsupported fields return `null` and will be filtered out by the caller.
+ */
+export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
   switch (field.type) {
     case 'url':
     case 'email':
@@ -39,25 +44,36 @@ export const jsTypeForAirtableType = (field: FieldSchema): string => {
           && typeof field.options.result === 'object'
           && field.options.result != null
       ) {
-        return `${jsTypeForAirtableType(field.options.result as FieldSchema)} | null`;
+        const innerType = jsTypeForAirtableType(field.options.result as FieldSchema);
+        if (innerType == null) return null;
+        return `${innerType} | null`;
       }
       throw new Error(`Invalid ${field.type} field (no options.result): ${field.id}`);
 
-    // Special cases we don't yet support
+    // Special cases we don't yet support; for now, skip these fields
+    // case 'aiText':
+    //   return 'AiTextObject';
+    // case 'singleCollaborator':
+    // case 'createdBy':
+    // case 'lastModifiedBy':
+    //   return 'CollaboratorObject';
+    // case 'multipleCollaborators':
+    //   return 'CollaboratorObject[]';
+    // case 'multipleAttachments':
+    //   return 'AttachmentObject[]';
+    // case 'barcode':
+    //   return 'BarcodeObject';
+    // case 'button':
+    //   return 'ButtonObject';
     case 'aiText':
-      return 'AiTextObject';
     case 'singleCollaborator':
     case 'createdBy':
     case 'lastModifiedBy':
-      return 'CollaboratorObject';
     case 'multipleCollaborators':
-      return 'CollaboratorObject[]';
     case 'multipleAttachments':
-      return 'AttachmentObject[]';
     case 'barcode':
-      return 'BarcodeObject';
     case 'button':
-      return 'ButtonObject';
+      return null;
     default:
       throw new Error(`Could not convert Airtable type '${field.type}' to a TypeScript type for field ${field.id}`);
   }
