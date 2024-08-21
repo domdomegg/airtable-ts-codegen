@@ -70,6 +70,7 @@ Pull requests are welcomed on GitHub! To get started:
 3. Install dependencies with `npm install`
 4. Run `npm run test` to run tests
 5. Build with `npm run build`
+6. Run the local version with `npm start`
 
 ## Releases
 
