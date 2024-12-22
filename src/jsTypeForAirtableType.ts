@@ -15,7 +15,15 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
     case 'richText':
     case 'singleSelect':
     case 'externalSyncSource':
+    case 'aiText':
+    case 'singleCollaborator':
+    case 'createdBy':
+    case 'lastModifiedBy':
+    case 'barcode':
+    case 'button':
       return 'string';
+    case 'multipleAttachments':
+    case 'multipleCollaborators':
     case 'multipleRecordLinks':
     case 'multipleSelects':
       return 'string[]';
@@ -50,31 +58,8 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
       }
       throw new Error(`Invalid ${field.type} field (no options.result): ${field.id}`);
 
-    // Special cases we don't yet support; for now, skip these fields
-    // case 'aiText':
-    //   return 'AiTextObject';
-    // case 'singleCollaborator':
-    // case 'createdBy':
-    // case 'lastModifiedBy':
-    //   return 'CollaboratorObject';
-    // case 'multipleCollaborators':
-    //   return 'CollaboratorObject[]';
-    // case 'multipleAttachments':
-    //   return 'AttachmentObject[]';
-    // case 'barcode':
-    //   return 'BarcodeObject';
-    // case 'button':
-    //   return 'ButtonObject';
-    case 'aiText':
-    case 'singleCollaborator':
-    case 'createdBy':
-    case 'lastModifiedBy':
-    case 'multipleCollaborators':
-    case 'multipleAttachments':
-    case 'barcode':
-    case 'button':
-      return null;
     default:
-      throw new Error(`Could not convert Airtable type '${field.type}' to a TypeScript type for field ${field.id}`);
+      console.warn(`Could not convert Airtable type '${field.type}' to a TypeScript type for field ${field.id}`);
+      return null;
   }
 };
