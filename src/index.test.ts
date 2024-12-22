@@ -28,6 +28,8 @@ import { execSync } from 'child_process';
       isOptional: false,
       project: ['recLUUmrS706HP1Yb'],
       projectOwner: 'Alice',
+      createdAt: 1714521131,
+      projectPlanPDF: [expect.stringContaining('airtableusercontent.com')],
     },
     {
       id: 'recnFWM2RsVGobKCp',
@@ -37,6 +39,8 @@ import { execSync } from 'child_process';
       isOptional: true,
       project: [],
       projectOwner: null,
+      createdAt: 1714521131,
+      projectPlanPDF: [],
     },
   ]);
 });

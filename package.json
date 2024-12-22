@@ -34,7 +34,7 @@
     "@tsconfig/node-lts": "^20.1.3",
     "@types/diacritics": "^1.3.3",
     "@types/node": "^20.12.8",
-    "airtable-ts": "^1.1.0",
+    "airtable-ts": "^1.4.0",
     "eslint": "^8.57.0",
     "eslint-config-domdomegg": "^1.2.3",
     "tsconfig-domdomegg": "^1.0.0",
