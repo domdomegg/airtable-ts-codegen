@@ -1,5 +1,8 @@
 import { remove } from 'diacritics';
 
+let invalidIdentifierCount = 0;
+const DEFAULT_IDENTIFIER = 'invalidIdentifier';
+
 /**
  * Checks if 'str' is already a valid JavaScript identifier.
  * If yes, returns true. Otherwise false.
@@ -42,7 +45,7 @@ function toPascalCase(str: string): string {
  *   - Remove invalid characters.
  *   - Convert to PascalCase.
  *   - If the result starts with a digit, prefix with `_`.
- * - Throws an error if the identifier cannot be salvaged.
+ * - Returns a default identifier if the identifier cannot be salvaged.
  */
 export function escapeIdentifier(name: string): string {
   // Normalize string by removing diacritics and trimming whitespace
@@ -59,9 +62,11 @@ export function escapeIdentifier(name: string): string {
     .replace(/\s+/g, ' ')                // Collapse multiple spaces
     .trim();
 
-  // Throw error if identifier is purely numeric after sanitization
+  // Return a default identifier if identifier is purely numeric after sanitization
   if (/^\d+$/.test(sanitized)) {
-    throw new Error(`Invalid and unsalvageable identifier: ${name}`);
+    console.warn(`Invalid identifier "${name}" became purely numeric after sanitization ("${sanitized}"). Using default identifier "${DEFAULT_IDENTIFIER}".`);
+    invalidIdentifierCount++;
+    return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
   }
 
   // Convert sanitized string to PascalCase
@@ -77,7 +82,9 @@ export function escapeIdentifier(name: string): string {
     // Fallback: Strip all invalid characters, replace with underscores, and re-collapse
     const validStartIndex = pascal.search(/[$A-Za-z]/);
     if (validStartIndex === -1) {
-      throw new Error(`Invalid and unsalvageable identifier: ${name}`);
+      console.warn(`Invalid identifier "${name}" contains no valid starting character after sanitization. Using default identifier "${DEFAULT_IDENTIFIER}".`);
+      invalidIdentifierCount++;
+      return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
     }
 
     pascal = pascal
@@ -88,7 +95,9 @@ export function escapeIdentifier(name: string): string {
     pascal = toPascalCase(pascal);
 
     if (!isValidJsIdentifier(pascal) || pascal.length === 0) {
-      throw new Error(`Invalid and unsalvageable identifier: ${name}`);
+      console.warn(`Invalid identifier "${name}" could not be salvaged. Using default identifier "${DEFAULT_IDENTIFIER}".`);
+      invalidIdentifierCount++;
+      return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
     }
   }
 
