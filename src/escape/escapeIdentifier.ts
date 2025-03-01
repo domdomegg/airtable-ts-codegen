@@ -1,4 +1,4 @@
-import { remove } from 'diacritics';
+import {remove} from 'diacritics';
 
 let invalidIdentifierCount = 0;
 const DEFAULT_IDENTIFIER = 'invalidIdentifier';
@@ -11,17 +11,18 @@ const DEFAULT_IDENTIFIER = 'invalidIdentifier';
  * - Also dynamically tests against reserved words and invalid usages by attempting declaration.
  */
 function isValidJsIdentifier(str: string): boolean {
-  if (!/^[$A-Z_a-z][\w$]*$/.test(str)) {
-    return false;
-  }
-  try {
-    // Test against reserved words and invalid declarations
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new
-    new Function(`const ${str} = 1;`);
-    return true;
-  } catch {
-    return false;
-  }
+	if (!/^[$A-Z_a-z][\w$]*$/.test(str)) {
+		return false;
+	}
+
+	try {
+		// Test against reserved words and invalid declarations
+		// eslint-disable-next-line no-new, no-new-func
+		new Function(`const ${str} = 1;`);
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -33,10 +34,10 @@ function isValidJsIdentifier(str: string): boolean {
  *   "123 abc" -> "123Abc"
  */
 function toPascalCase(str: string): string {
-  return str
-    .split(/\s+/)
-    .map((token) => (token ? token[0]!.toUpperCase() + token.slice(1).toLowerCase() : ''))
-    .join('');
+	return str
+		.split(/\s+/)
+		.map((token) => (token ? token[0]!.toUpperCase() + token.slice(1).toLowerCase() : ''))
+		.join('');
 }
 
 /**
@@ -49,58 +50,58 @@ function toPascalCase(str: string): string {
  * - Returns a default identifier if the identifier cannot be salvaged.
  */
 export function escapeIdentifier(name: string): string {
-  // Normalize string by removing diacritics and trimming whitespace
-  const trimmed = remove(name).trim();
+	// Normalize string by removing diacritics and trimming whitespace
+	const trimmed = remove(name).trim();
 
-  // If already a valid identifier, return unchanged
-  if (isValidJsIdentifier(trimmed)) {
-    return trimmed;
-  }
+	// If already a valid identifier, return unchanged
+	if (isValidJsIdentifier(trimmed)) {
+		return trimmed;
+	}
 
-  // Sanitize: Remove invalid characters, preserving letters, numbers, underscores, and spaces for token splitting
-  const sanitized = trimmed
-    .replace(/[^\p{L}\p{N}_\s]+/gu, ' ') // Replace special characters with spaces
-    .replace(/\s+/g, ' ') // Collapse multiple spaces
-    .trim();
+	// Sanitize: Remove invalid characters, preserving letters, numbers, underscores, and spaces for token splitting
+	const sanitized = trimmed
+		.replace(/[^\p{L}\p{N}_\s]+/gu, ' ') // Replace special characters with spaces
+		.replace(/\s+/g, ' ') // Collapse multiple spaces
+		.trim();
 
-  // Return a default identifier if identifier is purely numeric after sanitization
-  if (/^\d+$/.test(sanitized)) {
-    invalidIdentifierCount += 1;
-    console.warn(`Invalid identifier "${name}" became purely numeric after sanitization ("${sanitized}"). Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
-    return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
-  }
+	// Return a default identifier if identifier is purely numeric after sanitization
+	if (/^\d+$/.test(sanitized)) {
+		invalidIdentifierCount += 1;
+		console.warn(`Invalid identifier "${name}" became purely numeric after sanitization ("${sanitized}"). Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
+		return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
+	}
 
-  // Convert sanitized string to PascalCase
-  let pascal = toPascalCase(sanitized);
+	// Convert sanitized string to PascalCase
+	let pascal = toPascalCase(sanitized);
 
-  // If it starts with a digit after conversion, prefix with an underscore
-  if (/^\d/.test(pascal)) {
-    pascal = `_${pascal}`;
-  }
+	// If it starts with a digit after conversion, prefix with an underscore
+	if (/^\d/.test(pascal)) {
+		pascal = `_${pascal}`;
+	}
 
-  // Final validation to ensure it conforms to JS identifier rules
-  if (!isValidJsIdentifier(pascal)) {
-    // Fallback: Strip all invalid characters, replace with underscores, and re-collapse
-    const validStartIndex = pascal.search(/[$A-Za-z]/);
-    if (validStartIndex === -1) {
-      invalidIdentifierCount += 1;
-      console.warn(`Invalid identifier "${name}" contains no valid starting character after sanitization. Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
-      return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
-    }
+	// Final validation to ensure it conforms to JS identifier rules
+	if (!isValidJsIdentifier(pascal)) {
+		// Fallback: Strip all invalid characters, replace with underscores, and re-collapse
+		const validStartIndex = pascal.search(/[$A-Za-z]/);
+		if (validStartIndex === -1) {
+			invalidIdentifierCount += 1;
+			console.warn(`Invalid identifier "${name}" contains no valid starting character after sanitization. Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
+			return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
+		}
 
-    pascal = pascal
-      .slice(validStartIndex)
-      .replace(/[^A-Za-z0-9_$]/g, '_')
-      .replace(/_+/g, '_');
+		pascal = pascal
+			.slice(validStartIndex)
+			.replace(/[^A-Za-z0-9_$]/g, '_')
+			.replace(/_+/g, '_');
 
-    pascal = toPascalCase(pascal);
+		pascal = toPascalCase(pascal);
 
-    if (!isValidJsIdentifier(pascal) || pascal.length === 0) {
-      invalidIdentifierCount += 1;
-      console.warn(`Invalid identifier "${name}" could not be salvaged. Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
-      return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
-    }
-  }
+		if (!isValidJsIdentifier(pascal) || pascal.length === 0) {
+			invalidIdentifierCount += 1;
+			console.warn(`Invalid identifier "${name}" could not be salvaged. Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
+			return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
+		}
+	}
 
-  return pascal;
+	return pascal;
 }

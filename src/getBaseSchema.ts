@@ -1,19 +1,19 @@
 import axios from 'axios';
-import { Config } from '.';
+import {type Config} from '.';
 
 export type FieldSchema = {
-  id: string,
-  type: string,
-  name: string,
-  description?: string,
-  options?: object,
+	id: string;
+	type: string;
+	name: string;
+	description?: string;
+	options?: object;
 };
 
 export type BaseSchema = {
-  id: string,
-  name: string,
-  description?: string,
-  fields: FieldSchema[]
+	id: string;
+	name: string;
+	description?: string;
+	fields: FieldSchema[];
 }[];
 
 /**
@@ -22,15 +22,15 @@ export type BaseSchema = {
  * @param baseId The base id to get the schemas for
  */
 export const getBaseSchema = async (baseId: string, options: Config): Promise<BaseSchema> => {
-  const res = await axios<{ tables: BaseSchema }>({
-    baseURL: options.endpointUrl ?? 'https://api.airtable.com',
-    url: `/v0/meta/bases/${baseId}/tables`,
-    ...(options.requestTimeout ? { timeout: options.requestTimeout } : {}),
-    headers: {
-      // eslint-disable-next-line no-underscore-dangle
-      Authorization: `Bearer ${options.apiKey}`,
-      ...options.customHeaders,
-    },
-  });
-  return res.data.tables;
+	const res = await axios<{tables: BaseSchema}>({
+		baseURL: options.endpointUrl ?? 'https://api.airtable.com',
+		url: `/v0/meta/bases/${baseId}/tables`,
+		...(options.requestTimeout ? {timeout: options.requestTimeout} : {}),
+		headers: {
+
+			Authorization: `Bearer ${options.apiKey}`,
+			...options.customHeaders,
+		},
+	});
+	return res.data.tables;
 };
