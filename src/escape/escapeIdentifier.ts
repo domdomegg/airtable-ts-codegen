@@ -16,6 +16,7 @@ function isValidJsIdentifier(str: string): boolean {
   }
   try {
     // Test against reserved words and invalid declarations
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new
     new Function(`const ${str} = 1;`);
     return true;
   } catch {
@@ -34,7 +35,7 @@ function isValidJsIdentifier(str: string): boolean {
 function toPascalCase(str: string): string {
   return str
     .split(/\s+/)
-    .map(token => token ? token[0]?.toUpperCase() + token.slice(1).toLowerCase() : '')
+    .map((token) => (token ? token[0]!.toUpperCase() + token.slice(1).toLowerCase() : ''))
     .join('');
 }
 
@@ -57,15 +58,15 @@ export function escapeIdentifier(name: string): string {
   }
 
   // Sanitize: Remove invalid characters, preserving letters, numbers, underscores, and spaces for token splitting
-  let sanitized = trimmed
+  const sanitized = trimmed
     .replace(/[^\p{L}\p{N}_\s]+/gu, ' ') // Replace special characters with spaces
-    .replace(/\s+/g, ' ')                // Collapse multiple spaces
+    .replace(/\s+/g, ' ') // Collapse multiple spaces
     .trim();
 
   // Return a default identifier if identifier is purely numeric after sanitization
   if (/^\d+$/.test(sanitized)) {
-    console.warn(`Invalid identifier "${name}" became purely numeric after sanitization ("${sanitized}"). Using default identifier "${DEFAULT_IDENTIFIER}".`);
-    invalidIdentifierCount++;
+    invalidIdentifierCount += 1;
+    console.warn(`Invalid identifier "${name}" became purely numeric after sanitization ("${sanitized}"). Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
     return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
   }
 
@@ -82,8 +83,8 @@ export function escapeIdentifier(name: string): string {
     // Fallback: Strip all invalid characters, replace with underscores, and re-collapse
     const validStartIndex = pascal.search(/[$A-Za-z]/);
     if (validStartIndex === -1) {
-      console.warn(`Invalid identifier "${name}" contains no valid starting character after sanitization. Using default identifier "${DEFAULT_IDENTIFIER}".`);
-      invalidIdentifierCount++;
+      invalidIdentifierCount += 1;
+      console.warn(`Invalid identifier "${name}" contains no valid starting character after sanitization. Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
       return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
     }
 
@@ -95,8 +96,8 @@ export function escapeIdentifier(name: string): string {
     pascal = toPascalCase(pascal);
 
     if (!isValidJsIdentifier(pascal) || pascal.length === 0) {
-      console.warn(`Invalid identifier "${name}" could not be salvaged. Using default identifier "${DEFAULT_IDENTIFIER}".`);
-      invalidIdentifierCount++;
+      invalidIdentifierCount += 1;
+      console.warn(`Invalid identifier "${name}" could not be salvaged. Using default identifier "${DEFAULT_IDENTIFIER}${invalidIdentifierCount}".`);
       return `${DEFAULT_IDENTIFIER}${invalidIdentifierCount}`;
     }
   }

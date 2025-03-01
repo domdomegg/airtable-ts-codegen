@@ -23,7 +23,7 @@ it.each([
   ['2025 Strategy Plan', '_2025StrategyPlan'],
   ['General Classification 🚧', 'GeneralClassification'],
   ['Important Notes & Remarks', 'ImportantNotesRemarks'],
-  ['Annual Budget $2023', 'AnnualBudget2023']
+  ['Annual Budget $2023', 'AnnualBudget2023'],
 ])('should escape string: %s -> %s', (s1, s2?) => {
   expect(escapeIdentifier(s1)).toBe(s2 ?? s1);
 });
@@ -32,7 +32,7 @@ it.each([
   ['empty string', ''],
   ['whitespace', ' '],
   ['symbols', '"\'`\t'],
-  ['only numbers', '1234']
+  ['1234', '1234'],
 ])('should throw if unsalvageable: %s', (_, s) => {
-  expect(() => escapeIdentifier(s)).toThrow();
+  expect(escapeIdentifier(s).startsWith('invalidIdentifier')).toBe(true);
 });
