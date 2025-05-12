@@ -12,6 +12,7 @@ export type FieldSchema = {
 export type BaseSchema = {
 	id: string;
 	name: string;
+	primaryFieldId?: string;
 	description?: string;
 	fields: FieldSchema[];
 }[];
