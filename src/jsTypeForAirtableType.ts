@@ -17,10 +17,11 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 		case 'externalSyncSource':
 		case 'aiText':
 		case 'singleCollaborator':
-		case 'createdBy':
 		case 'lastModifiedBy':
 		case 'barcode':
 		case 'button':
+			return 'string | null';
+		case 'createdBy':
 			return 'string';
 		case 'multipleAttachments':
 		case 'multipleCollaborators':
@@ -32,13 +33,15 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 		case 'duration':
 		case 'currency':
 		case 'percent':
+			return 'number | null';
 		case 'count':
 		case 'autoNumber':
 			return 'number';
 		case 'date':
 		case 'dateTime':
-		case 'createdTime':
 		case 'lastModifiedTime':
+			return 'number | null'; // Unix timestamp in seconds
+		case 'createdTime':
 			return 'number'; // Unix timestamp in seconds
 		case 'checkbox':
 			return 'boolean';
@@ -55,6 +58,10 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 				const innerType = jsTypeForAirtableType(field.options.result as FieldSchema);
 				if (innerType === null) {
 					return null;
+				}
+
+				if (innerType.includes('null')) {
+					return innerType;
 				}
 
 				return `${innerType} | null`;
