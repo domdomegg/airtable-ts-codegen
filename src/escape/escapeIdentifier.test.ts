@@ -1,5 +1,9 @@
-import {expect, it} from 'vitest';
-import {escapeIdentifier} from './escapeIdentifier';
+import {expect, it, beforeEach} from 'vitest';
+import {escapeIdentifier, resetIdentifierState} from './escapeIdentifier';
+
+beforeEach(() => {
+	resetIdentifierState();
+});
 
 it.each([
 	['ShouldNotBeChanged'],
@@ -35,4 +39,35 @@ it.each([
 	['1234', '1234'],
 ])('should throw if unsalvageable: %s', (_, s) => {
 	expect(escapeIdentifier(s).startsWith('invalidIdentifier')).toBe(true);
+});
+
+// Test cases for special character handling to avoid duplicates by adding numbers
+it('should handle duplicate base names by adding numbers', () => {
+	// Reset the internal counter for predictable test results
+	const inputs = ['% amount', '$ amount', '@ amount', '# amount'];
+	const results = inputs.map((input) => escapeIdentifier(input));
+
+	// All results should be unique
+	const uniqueResults = new Set(results);
+	expect(uniqueResults.size).toBe(inputs.length);
+
+	// Should get Amount, Amount2, Amount3, Amount4 (or similar numbering)
+	expect(results[0]).toBe('Amount');
+	expect(results[1]).toBe('Amount2');
+	expect(results[2]).toBe('Amount3');
+	expect(results[3]).toBe('Amount4');
+});
+
+// Test individual cases
+it.each([
+	['% amount', 'Amount'],
+	['$ price', 'Price'],
+	['@ email', 'Email'],
+	['# number', 'Number'],
+	['& operator', 'Operator'],
+])('should drop special characters: %s -> %s', (input, expected) => {
+	// Note: This test assumes no previous calls that would affect numbering
+	const result = escapeIdentifier(input);
+	// The result should either be the expected name or the expected name with a number
+	expect(result === expected || result.startsWith(expected)).toBe(true);
 });

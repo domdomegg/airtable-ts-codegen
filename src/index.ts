@@ -1,7 +1,7 @@
 import {recase} from '@kristiandupont/recase';
 import {type BaseSchema, type FieldSchema, getBaseSchema} from './getBaseSchema';
 import {escapeString} from './escape/escapeString';
-import {escapeIdentifier} from './escape/escapeIdentifier';
+import {escapeIdentifier, resetIdentifierState} from './escape/escapeIdentifier';
 import {jsTypeForAirtableType} from './jsTypeForAirtableType';
 
 export type Config = {
@@ -24,22 +24,24 @@ export const main = async (config: Config) => {
 	].join('\n');
 };
 
-type FieldWithJsInfo = FieldSchema & {jsName: string; jsType: string | null};
+type FieldWithJsInfo = FieldSchema & {jsName: string; jsType: string | null; originalName: string};
 
-const generateInterfaceEntry = ({jsName, jsType, name, type}: FieldWithJsInfo): string => {
+const generateInterfaceEntry = ({jsName, jsType, name, type, originalName}: FieldWithJsInfo): string => {
 	if (jsType === null) {
-		return `\n  // Unsupported field ${name} of type ${type}`;
+		return `\n  // Unsupported field "${name}" of type ${type}`;
 	}
 
-	return `\n  ${jsName}: ${jsType},`;
+	const comment = originalName !== jsName ? ` // Original field: "${originalName}"` : '';
+	return `\n  ${jsName}: ${jsType},${comment}`;
 };
 
-const generateMappingEntry = ({jsName, id, jsType, name}: FieldWithJsInfo): string => {
+const generateMappingEntry = ({jsName, id, jsType, name, originalName}: FieldWithJsInfo): string => {
 	if (jsType === null) {
-		return `\n    // Unsupported field ${name}: ${escapeString(id)}`;
+		return `\n    // Unsupported field "${name}": ${escapeString(id)}`;
 	}
 
-	return `\n    ${jsName}: '${escapeString(id)}',`;
+	const comment = originalName !== jsName ? ` // Original field: "${originalName}"` : '';
+	return `\n    ${jsName}: '${escapeString(id)}',${comment}`;
 };
 
 const generateSchemaEntry = ({jsName, jsType}: FieldWithJsInfo): string | null => {
@@ -51,12 +53,15 @@ const generateSchemaEntry = ({jsName, jsType}: FieldWithJsInfo): string | null =
 };
 
 const generateCode = (config: Config, tableSchema: BaseSchema[number]): string => {
+	resetIdentifierState();
+
 	const itemNameRaw = escapeIdentifier(recase(null, 'pascal', tableSchema.name));
 	const itemName = /.s$/.test(itemNameRaw) ? itemNameRaw.slice(0, itemNameRaw.length - 1) : itemNameRaw;
 	const tableName = escapeIdentifier(`${recase(null, 'camel', tableSchema.name)}Table`);
 
 	const fields: FieldWithJsInfo[] = tableSchema.fields.map((f) => ({
 		...f,
+		originalName: f.name,
 		jsName: escapeIdentifier(recase(null, 'camel', escapeIdentifier(f.name))),
 		jsType: jsTypeForAirtableType(f),
 	}));
