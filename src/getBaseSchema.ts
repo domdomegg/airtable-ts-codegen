@@ -28,7 +28,6 @@ export const getBaseSchema = async (baseId: string, options: Config): Promise<Ba
 		url: `/v0/meta/bases/${baseId}/tables`,
 		...(options.requestTimeout ? {timeout: options.requestTimeout} : {}),
 		headers: {
-
 			Authorization: `Bearer ${options.apiKey}`,
 			...options.customHeaders,
 		},

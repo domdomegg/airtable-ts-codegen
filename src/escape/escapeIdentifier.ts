@@ -3,6 +3,17 @@ import {remove} from 'diacritics';
 let invalidIdentifierCount = 0;
 const DEFAULT_IDENTIFIER = 'invalidIdentifier';
 
+// Track used identifiers to avoid duplicates
+const usedIdentifiers = new Set<string>();
+
+/**
+ * Reset the internal state - useful for testing
+ */
+export function resetIdentifierState(): void {
+	usedIdentifiers.clear();
+	invalidIdentifierCount = 0;
+}
+
 /**
  * Checks if 'str' is already a valid JavaScript identifier.
  * If yes, returns true. Otherwise false.
@@ -47,6 +58,7 @@ function toPascalCase(str: string): string {
  *   - Remove invalid characters.
  *   - Convert to PascalCase.
  *   - If the result starts with a digit, prefix with `_`.
+ *   - If duplicate, add a number suffix.
  * - Returns a default identifier if the identifier cannot be salvaged.
  */
 export function escapeIdentifier(name: string): string {
@@ -103,5 +115,15 @@ export function escapeIdentifier(name: string): string {
 		}
 	}
 
-	return pascal;
+	// Handle duplicates by adding numbers
+	let finalIdentifier = pascal;
+	let counter = 2;
+
+	while (usedIdentifiers.has(finalIdentifier)) {
+		finalIdentifier = `${pascal}${counter}`;
+		counter += 1;
+	}
+
+	usedIdentifiers.add(finalIdentifier);
+	return finalIdentifier;
 }
