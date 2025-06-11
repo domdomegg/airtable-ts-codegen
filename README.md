@@ -12,15 +12,15 @@ AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 npx airtable-ts-codegen
 
 This will output a file `app1234.ts` that exports all the table definitions
 
-### Generate from a specific view (Enterprise only)
+### Generate from a specific view
 
-You can also generate TypeScript definitions based on a specific view, which will only include the fields visible in that view:
+You can also generate TypeScript definitions based on a specific view, which will only include the fields visible in those views:
 
 ```sh
-AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 AIRTABLE_VIEW_IDS=viw1234,view5678 npx airtable-ts-codegen
+AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 AIRTABLE_VIEW_IDS=viw1234,viw5678 npx airtable-ts-codegen
 ```
 
-This will output a file `app1234-viw1234-view5678.ts` that exports table definitions with only the fields visible in the specified views.
+This will output a file `app1234.ts` that exports table definitions with only the fields visible in the specified views.
 
 <details>
 <summary>Example generated file</summary>

@@ -25,7 +25,7 @@ const generateCode = async () => {
 };
 
 generateCode().then((result) => {
-	const filename = config.viewIds ? `${escapeIdentifier(baseId)}-${escapeIdentifier(config.viewIds.join('-'))}.ts` : `${escapeIdentifier(baseId)}.ts`;
+	const filename = `${escapeIdentifier(baseId)}.ts`;
 	writeFileSync(filename, result);
 	console.log(`Generated ${filename}`);
 }).catch((err: unknown) => {
