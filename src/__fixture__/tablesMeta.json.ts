@@ -63,6 +63,6 @@ export const tablesMeta = {
 			{type: 'autoNumber', id: 'fldGM8wIYk3G8WMiE', name: 'ID'},
 			{type: 'barcode', id: 'fldMPs1eLH8X5bWeS', name: 'Barcode'},
 			{type: 'button', id: 'fldAG3LTbJRwQVEvS', name: 'Button'}],
+		views: [],
 	}],
 } satisfies {tables: BaseSchema};
-

@@ -14,8 +14,20 @@ if (!baseId) {
 	throw new Error('No Airtable base id set. Make sure the AIRTABLE_BASE_ID environment variable is set.');
 }
 
-main({apiKey, baseId}).then((result) => {
-	writeFileSync(`${escapeIdentifier(baseId)}.ts`, result);
+const viewIds = process.env.AIRTABLE_VIEW_IDS;
+
+const config = {apiKey, baseId, ...(viewIds && {viewIds: viewIds.split(',')})};
+
+const generateCode = async () => {
+	console.log(`Generating TypeScript definitions for base ${baseId}${viewIds ? ` with views ${viewIds}` : ''}...`);
+
+	return main(config);
+};
+
+generateCode().then((result) => {
+	const filename = config.viewIds ? `${escapeIdentifier(baseId)}-${escapeIdentifier(config.viewIds.join('-'))}.ts` : `${escapeIdentifier(baseId)}.ts`;
+	writeFileSync(filename, result);
+	console.log(`Generated ${filename}`);
 }).catch((err: unknown) => {
 	console.error(err);
 	process.exit(1);
