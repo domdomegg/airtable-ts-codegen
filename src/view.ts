@@ -1,13 +1,5 @@
 import type {Config} from './index';
-import {type BaseSchema} from './getBaseSchema';
-
-export type ViewSchema = {
-	id: string;
-	name: string;
-	type: 'grid' | 'form' | 'calendar' | 'gallery' | 'kanban' | 'timeline' | 'block';
-	personalForUserId?: string;
-	visibleFieldIds?: string[];
-};
+import {type ViewSchema, type BaseSchema} from './getBaseSchema';
 
 /**
  * Find a view by ID in the base schema
