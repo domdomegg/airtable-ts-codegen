@@ -9,12 +9,20 @@ export type FieldSchema = {
 	options?: object;
 };
 
+export type ViewSchema = {
+	id: string;
+	name: string;
+	type: 'grid' | 'form' | 'calendar' | 'gallery' | 'kanban' | 'timeline' | 'block';
+	visibleFieldIds?: string[];
+};
+
 export type BaseSchema = {
 	id: string;
 	name: string;
 	primaryFieldId?: string;
 	description?: string;
 	fields: FieldSchema[];
+	views: ViewSchema[];
 }[];
 
 /**
@@ -26,6 +34,9 @@ export const getBaseSchema = async (baseId: string, options: Config): Promise<Ba
 	const res = await axios<{tables: BaseSchema}>({
 		baseURL: options.endpointUrl ?? 'https://api.airtable.com',
 		url: `/v0/meta/bases/${baseId}/tables`,
+		params: {
+			include: ['visibleFieldIds'],
+		},
 		...(options.requestTimeout ? {timeout: options.requestTimeout} : {}),
 		headers: {
 			Authorization: `Bearer ${options.apiKey}`,
