@@ -7,10 +7,11 @@ Autogenerate TypeScript definitions for your Airtable base
 Run with:
 
 ```sh
-AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 npx airtable-ts-codegen
+AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 npx airtable-ts-codegen [filename]
 ```
 
-This will output a file `app1234.ts` that exports all the table definitions
+- If you provide a `filename`, the generated definitions will be written to that file (with `.ts` automatically added if missing).
+- If you omit the `filename`, the tool falls back to the default behavior and writes to` <AIRTABLE_BASE_ID>.ts`.
 
 ### Generate from a specific view
 
