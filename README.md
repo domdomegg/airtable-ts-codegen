@@ -72,6 +72,25 @@ const allTasks = await db.scan(tasksTable);
 // You now have all the benefits of airtable-ts, without having to define schemas manually 🎉
 ```
 
+### Using environment variables from a `.env` file
+
+Instead of passing `AIRTABLE_API_KEY` , `AIRTABLE_BASE_ID` and `AIRTABLE_VIEW_IDS` on the command line, you can keep them in a `.env` file and use [dotenvx](https://github.com/dotenvx/dotenvx) to load them:
+
+```sh
+# .env
+AIRTABLE_API_KEY=pat1234.abcd
+AIRTABLE_BASE_ID=app1234
+AIRTABLE_VIEW_IDS=viw1234,viw5678
+```
+
+Run the generator with:
+
+```sh
+npx @dotenvx/dotenvx run -- npx airtable-ts-codegen [filename]
+```
+
+This works the same as before, but keeps your secrets out of the command line history.
+
 ## Contributing
 
 Pull requests are welcomed on GitHub! To get started:
