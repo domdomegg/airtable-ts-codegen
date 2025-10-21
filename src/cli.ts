@@ -2,6 +2,7 @@
 
 import {writeFileSync} from 'fs';
 import {main} from '.';
+import {ensureTsExtension} from './escape/ensureTsExtension';
 import {escapeIdentifier} from './escape/escapeIdentifier';
 
 const apiKey = process.env.AIRTABLE_API_KEY;
@@ -16,6 +17,8 @@ if (!baseId) {
 
 const viewIds = process.env.AIRTABLE_VIEW_IDS;
 
+const filename = ensureTsExtension(process.argv[2] || escapeIdentifier(baseId));
+
 const config = {apiKey, baseId, ...(viewIds && {viewIds: viewIds.split(',')})};
 
 const generateCode = async () => {
@@ -25,7 +28,6 @@ const generateCode = async () => {
 };
 
 generateCode().then((result) => {
-	const filename = `${escapeIdentifier(baseId)}.ts`;
 	writeFileSync(filename, result);
 	console.log(`Generated ${filename}`);
 }).catch((err: unknown) => {
