@@ -62,7 +62,22 @@ export const tablesMeta = {
 			{type: 'createdBy', id: 'fldDcRoVGJXIhVSAi', name: 'Created By'},
 			{type: 'autoNumber', id: 'fldGM8wIYk3G8WMiE', name: 'ID'},
 			{type: 'barcode', id: 'fldMPs1eLH8X5bWeS', name: 'Barcode'},
-			{type: 'button', id: 'fldAG3LTbJRwQVEvS', name: 'Button'}],
+			{type: 'button', id: 'fldAG3LTbJRwQVEvS', name: 'Button'},
+			{
+				type: 'multipleLookupValues', options: {
+					isValid: true, recordLinkFieldId: 'fldLinked', fieldIdInLinkedTable: 'fldName', result: {type: 'singleLineText'},
+				}, id: 'fldLookupText', name: 'Lookup Text',
+			},
+			{
+				type: 'multipleLookupValues', options: {
+					isValid: true, recordLinkFieldId: 'fldLinked', fieldIdInLinkedTable: 'fldNumber', result: {type: 'number', options: {precision: 0}},
+				}, id: 'fldLookupNumber', name: 'Lookup Number',
+			},
+			{
+				type: 'multipleLookupValues', options: {
+					isValid: true, recordLinkFieldId: 'fldLinked', fieldIdInLinkedTable: 'fldTags', result: {type: 'multipleSelects', options: {choices: []}},
+				}, id: 'fldLookupTags', name: 'Lookup Tags',
+			}],
 		views: [],
 	}],
 } satisfies {tables: BaseSchema};
