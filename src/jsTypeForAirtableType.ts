@@ -45,8 +45,31 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 			return 'number'; // Unix timestamp in seconds
 		case 'checkbox':
 			return 'boolean';
-		case 'lookup':
 		case 'multipleLookupValues':
+			if (
+				field.options
+				&& 'result' in field.options
+				&& typeof field.options.result === 'object'
+				&& field.options.result !== null
+			) {
+				const innerType = jsTypeForAirtableType(field.options.result as FieldSchema);
+				if (innerType === null) {
+					return null;
+				}
+
+				// multipleLookupValues always returns an array
+				// Strip nullability from inner type since the array itself represents empty state
+				const baseType = innerType.replace(/ \| null$/, '').replace(/^null \| /, '');
+				// If inner type is already an array, Airtable flattens lookup results
+				if (baseType.endsWith('[]')) {
+					return baseType;
+				}
+
+				return `${baseType}[]`;
+			}
+
+			throw new Error(`Invalid ${field.type} field (no options.result): ${field.id}`);
+		case 'lookup':
 		case 'rollup':
 		case 'formula':
 			if (

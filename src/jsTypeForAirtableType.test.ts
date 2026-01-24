@@ -78,6 +78,19 @@ describe('jsTypeForAirtableType', () => {
 		expect(jsTypeForAirtableType(formula)).toBe('string | null');
 	});
 
+	it('handles multipleLookupValues fields as arrays', () => {
+		const lookupText = table.fields.find((f) => f.id === 'fldLookupText')!;
+		const lookupNumber = table.fields.find((f) => f.id === 'fldLookupNumber')!;
+		const lookupTags = table.fields.find((f) => f.id === 'fldLookupTags')!;
+
+		// Text lookup should return string[]
+		expect(jsTypeForAirtableType(lookupText)).toBe('string[]');
+		// Number lookup should return number[]
+		expect(jsTypeForAirtableType(lookupNumber)).toBe('number[]');
+		// Lookup of array type (multipleSelects) should return string[] (flattened)
+		expect(jsTypeForAirtableType(lookupTags)).toBe('string[]');
+	});
+
 	it('throws error for invalid formula field', () => {
 		const invalidFormula = {
 			type: 'formula',
@@ -86,5 +99,15 @@ describe('jsTypeForAirtableType', () => {
 		};
 
 		expect(() => jsTypeForAirtableType(invalidFormula as any)).toThrow('Invalid formula field (no options.result): invalid');
+	});
+
+	it('throws error for invalid multipleLookupValues field', () => {
+		const invalidLookup = {
+			type: 'multipleLookupValues',
+			id: 'invalidLookup',
+			options: {}, // Missing result property
+		};
+
+		expect(() => jsTypeForAirtableType(invalidLookup as any)).toThrow('Invalid multipleLookupValues field (no options.result): invalidLookup');
 	});
 });
