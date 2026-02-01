@@ -18,7 +18,9 @@ const viewIds = process.env.AIRTABLE_VIEW_IDS;
 const attachmentTypeEnv = process.env.AIRTABLE_ATTACHMENT_TYPE;
 const attachmentType = attachmentTypeEnv === 'Attachment' ? 'Attachment' as const : 'string' as const;
 
-const config = {apiKey, baseId, ...(viewIds && {viewIds: viewIds.split(',')}), attachmentType};
+const config = {
+	apiKey, baseId, ...(viewIds && {viewIds: viewIds.split(',')}), attachmentType,
+};
 
 const generateCode = async () => {
 	console.log(`Generating TypeScript definitions for base ${baseId}${viewIds ? ` with views ${viewIds}` : ''}...`);

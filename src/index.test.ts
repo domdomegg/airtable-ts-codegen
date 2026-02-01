@@ -465,9 +465,9 @@ test('main generates Attachment[] type when attachmentType option is set', async
 	const resultWithAttachment = await main(configWithAttachment);
 
 	// THEN it should import Attachment and use Attachment[] type
-	expect(resultWithAttachment).toContain("import type { Attachment, Item, Table } from 'airtable-ts';");
+	expect(resultWithAttachment).toContain('import type { Attachment, Item, Table } from \'airtable-ts\';');
 	expect(resultWithAttachment).toContain('documents: Attachment[]');
-	expect(resultWithAttachment).toContain("documents: 'Attachment[]'");
+	expect(resultWithAttachment).toContain('documents: \'Attachment[]\'');
 
 	// WHEN we generate code without the option (default)
 	const configDefault = {
@@ -478,10 +478,10 @@ test('main generates Attachment[] type when attachmentType option is set', async
 	const resultDefault = await main(configDefault);
 
 	// THEN it should NOT import Attachment and use string[] type
-	expect(resultDefault).toContain("import type { Item, Table } from 'airtable-ts';");
+	expect(resultDefault).toContain('import type { Item, Table } from \'airtable-ts\';');
 	expect(resultDefault).not.toContain('Attachment');
 	expect(resultDefault).toContain('documents: string[]');
-	expect(resultDefault).toContain("documents: 'string[]'");
+	expect(resultDefault).toContain('documents: \'string[]\'');
 });
 
 test('main throws error when view ID does not exist in any table', async () => {
