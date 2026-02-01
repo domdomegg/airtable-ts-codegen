@@ -431,6 +431,59 @@ test('main generates TypeScript code for non-grid view with all fields', async (
 	expect(mockGetBaseSchema).toHaveBeenCalledWith('appTest123', config);
 });
 
+test('main generates Attachment[] type when attachmentType option is set', async () => {
+	// GIVEN a mock base schema with multipleAttachments fields
+	const mockBaseSchema = [
+		{
+			id: 'tblTest123',
+			name: 'Files',
+			fields: [
+				{
+					id: 'fld1',
+					name: 'Name',
+					type: 'singleLineText',
+				},
+				{
+					id: 'fld2',
+					name: 'Documents',
+					type: 'multipleAttachments',
+				},
+			],
+			views: [],
+		},
+	];
+
+	mockGetBaseSchema.mockResolvedValue(mockBaseSchema);
+
+	// WHEN we generate code with attachmentType: 'Attachment'
+	const configWithAttachment = {
+		apiKey: 'test-key',
+		baseId: 'appTest123',
+		attachmentType: 'Attachment' as const,
+	};
+
+	const resultWithAttachment = await main(configWithAttachment);
+
+	// THEN it should import Attachment and use Attachment[] type
+	expect(resultWithAttachment).toContain("import type { Attachment, Item, Table } from 'airtable-ts';");
+	expect(resultWithAttachment).toContain('documents: Attachment[]');
+	expect(resultWithAttachment).toContain("documents: 'Attachment[]'");
+
+	// WHEN we generate code without the option (default)
+	const configDefault = {
+		apiKey: 'test-key',
+		baseId: 'appTest123',
+	};
+
+	const resultDefault = await main(configDefault);
+
+	// THEN it should NOT import Attachment and use string[] type
+	expect(resultDefault).toContain("import type { Item, Table } from 'airtable-ts';");
+	expect(resultDefault).not.toContain('Attachment');
+	expect(resultDefault).toContain('documents: string[]');
+	expect(resultDefault).toContain("documents: 'string[]'");
+});
+
 test('main throws error when view ID does not exist in any table', async () => {
 	// GIVEN a mock base schema without the requested view
 	const mockBaseSchema = [

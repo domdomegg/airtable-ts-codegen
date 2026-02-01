@@ -1,11 +1,16 @@
 import {type FieldSchema} from './getBaseSchema';
 
+export type JsTypeOptions = {
+	/** Type to use for multipleAttachments fields */
+	attachmentType?: 'string' | 'Attachment';
+};
+
 /**
  * Returns the corresponding Typescript type for the given Airtable field type.
  *
  * Unsupported fields return `null` and will be filtered out by the caller.
  */
-export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
+export const jsTypeForAirtableType = (field: FieldSchema, options: JsTypeOptions = {}): string | null => {
 	switch (field.type) {
 		case 'url':
 		case 'email':
@@ -24,6 +29,7 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 		case 'createdBy':
 			return 'string';
 		case 'multipleAttachments':
+			return options.attachmentType === 'Attachment' ? 'Attachment[]' : 'string[]';
 		case 'multipleCollaborators':
 		case 'multipleRecordLinks':
 		case 'multipleSelects':
@@ -52,7 +58,7 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 				&& typeof field.options.result === 'object'
 				&& field.options.result !== null
 			) {
-				const innerType = jsTypeForAirtableType(field.options.result as FieldSchema);
+				const innerType = jsTypeForAirtableType(field.options.result as FieldSchema, options);
 				if (innerType === null) {
 					return null;
 				}
@@ -78,7 +84,7 @@ export const jsTypeForAirtableType = (field: FieldSchema): string | null => {
 				&& typeof field.options.result === 'object'
 				&& field.options.result !== null
 			) {
-				const innerType = jsTypeForAirtableType(field.options.result as FieldSchema);
+				const innerType = jsTypeForAirtableType(field.options.result as FieldSchema, options);
 				if (innerType === null) {
 					return null;
 				}
