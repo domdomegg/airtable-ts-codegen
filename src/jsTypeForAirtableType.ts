@@ -2,7 +2,7 @@ import {type FieldSchema} from './getBaseSchema';
 
 export type JsTypeOptions = {
 	/** Type to use for multipleAttachments fields */
-	attachmentType?: 'string' | 'Attachment';
+	attachmentType?: 'string' | 'Attachment' | undefined;
 };
 
 /**
