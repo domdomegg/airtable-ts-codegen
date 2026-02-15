@@ -40,6 +40,18 @@ describe('jsTypeForAirtableType', () => {
 		expect(jsTypeForAirtableType(multipleSelects)).toBe('string[]');
 	});
 
+	it('converts multipleAttachments to Attachment[] when option is set', () => {
+		const multipleAttachments = table.fields.find((f) => f.type === 'multipleAttachments')!;
+
+		// Default behavior (no option) returns string[]
+		expect(jsTypeForAirtableType(multipleAttachments)).toBe('string[]');
+		expect(jsTypeForAirtableType(multipleAttachments, {})).toBe('string[]');
+		expect(jsTypeForAirtableType(multipleAttachments, {attachmentType: 'string'})).toBe('string[]');
+
+		// With Attachment option returns Attachment[]
+		expect(jsTypeForAirtableType(multipleAttachments, {attachmentType: 'Attachment'})).toBe('Attachment[]');
+	});
+
 	it('converts numeric fields to number', () => {
 		const number = table.fields.find((f) => f.type === 'number')!;
 		const currency = table.fields.find((f) => f.type === 'currency')!;
