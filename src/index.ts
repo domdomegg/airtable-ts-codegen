@@ -17,8 +17,9 @@ export type Config = {
 	 * - 'string': generates `string[]` (array of URLs only)
 	 * - 'Attachment': generates `Attachment[]` (full metadata including id, filename, size, etc.)
 	 * @default 'string'
+	 * @unstable This option may change or be removed in future versions.
 	 */
-	attachmentType?: 'string' | 'Attachment';
+	unstable_attachmentType?: 'string' | 'Attachment';
 };
 
 // This generates a single typescript file containing all table definitions for a given base.
@@ -27,7 +28,7 @@ export const main = async (config: Config) => {
 	const filteredBaseSchema = await filterBaseSchemaByView(baseSchema, config);
 
 	// Determine if we need to import Attachment type
-	const useAttachmentType = config.attachmentType === 'Attachment';
+	const useAttachmentType = config.unstable_attachmentType === 'Attachment';
 	const importTypes = useAttachmentType
 		? 'import type { Attachment, Item, Table } from \'airtable-ts\';'
 		: 'import type { Item, Table } from \'airtable-ts\';';
@@ -76,7 +77,7 @@ const generateCode = (config: Config, tableSchema: BaseSchema[number]): string =
 	const itemName = /.s$/.test(itemNameRaw) ? itemNameRaw.slice(0, itemNameRaw.length - 1) : itemNameRaw;
 	const tableName = escapeIdentifier(`${recase(null, 'camel', tableSchema.name)}Table`);
 
-	const jsTypeOptions: JsTypeOptions = {attachmentType: config.attachmentType};
+	const jsTypeOptions: JsTypeOptions = {attachmentType: config.unstable_attachmentType};
 	const fields: FieldWithJsInfo[] = tableSchema.fields.map((f) => ({
 		...f,
 		originalName: f.name,

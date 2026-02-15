@@ -15,11 +15,11 @@ if (!baseId) {
 }
 
 const viewIds = process.env.AIRTABLE_VIEW_IDS;
-const attachmentTypeEnv = process.env.AIRTABLE_ATTACHMENT_TYPE;
-const attachmentType = attachmentTypeEnv === 'Attachment' ? 'Attachment' as const : 'string' as const;
+const unstableAttachmentTypeEnv = process.env.UNSTABLE_AIRTABLE_ATTACHMENT_TYPE;
+const unstable_attachmentType = unstableAttachmentTypeEnv === 'Attachment' ? 'Attachment' as const : 'string' as const;
 
 const config = {
-	apiKey, baseId, ...(viewIds && {viewIds: viewIds.split(',')}), attachmentType,
+	apiKey, baseId, ...(viewIds && {viewIds: viewIds.split(',')}), unstable_attachmentType,
 };
 
 const generateCode = async () => {

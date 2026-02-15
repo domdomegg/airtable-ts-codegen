@@ -455,11 +455,11 @@ test('main generates Attachment[] type when attachmentType option is set', async
 
 	mockGetBaseSchema.mockResolvedValue(mockBaseSchema);
 
-	// WHEN we generate code with attachmentType: 'Attachment'
+	// WHEN we generate code with unstable_attachmentType: 'Attachment'
 	const configWithAttachment = {
 		apiKey: 'test-key',
 		baseId: 'appTest123',
-		attachmentType: 'Attachment' as const,
+		unstable_attachmentType: 'Attachment' as const,
 	};
 
 	const resultWithAttachment = await main(configWithAttachment);

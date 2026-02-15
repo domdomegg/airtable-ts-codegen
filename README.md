@@ -22,15 +22,17 @@ AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 AIRTABLE_VIEW_IDS=viw1234
 
 This will output a file `app1234.ts` that exports table definitions with only the fields visible in the specified views.
 
-### Attachment type
+### Attachment type (unstable)
 
-By default, `multipleAttachments` fields are typed as `string[]` (array of URLs). To get full attachment metadata (id, filename, size, type, etc.), set `AIRTABLE_ATTACHMENT_TYPE=Attachment`:
+By default, `multipleAttachments` fields are typed as `string[]` (array of URLs). To get full attachment metadata (id, filename, size, type, etc.), set `UNSTABLE_AIRTABLE_ATTACHMENT_TYPE=Attachment`:
 
 ```sh
-AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 AIRTABLE_ATTACHMENT_TYPE=Attachment npx airtable-ts-codegen
+AIRTABLE_API_KEY=pat1234.abcd AIRTABLE_BASE_ID=app1234 UNSTABLE_AIRTABLE_ATTACHMENT_TYPE=Attachment npx airtable-ts-codegen
 ```
 
 This will generate `Attachment[]` instead of `string[]` for attachment fields, giving you access to the full attachment object with properties like `id`, `url`, `filename`, `size`, `type`, `width`, `height`, and `thumbnails`.
+
+> **Note:** This option is unstable and may change or be removed in future versions.
 
 <details>
 <summary>Example generated file</summary>
